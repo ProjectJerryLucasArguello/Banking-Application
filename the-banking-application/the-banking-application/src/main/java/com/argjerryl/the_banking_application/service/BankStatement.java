@@ -1,5 +1,6 @@
 package com.argjerryl.the_banking_application.service;
 
+import com.argjerryl.the_banking_application.dto.EmailDets;
 import com.argjerryl.the_banking_application.enitity.AccountInfo;
 import com.argjerryl.the_banking_application.enitity.Transaction;
 import com.argjerryl.the_banking_application.repository.AccountRepository;
@@ -40,6 +41,8 @@ public class BankStatement {
 
     @Autowired
     AccountRepository accountRepository;
+
+    private EmailService emailService;
 
     //Checking the accountNumber and it's action between a certain time frame
     public List<Transaction> generateStatement(String accountNumber, String startDate, String endDate) throws FileNotFoundException, DocumentException {
@@ -130,6 +133,13 @@ public class BankStatement {
         document.add(transactionTable);
 
         document.close();
+
+        EmailDets emailDets = EmailDets.builder()
+                .recipient(user.getEmail())
+                .subject("STATEMENT OF ACCOUNT")
+                .messageBody("Kindly find your requested account statement attached!")
+                .attachement(FILE)
+                .build();
 
         return transactionList;
     }
